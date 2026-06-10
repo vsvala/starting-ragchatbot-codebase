@@ -111,6 +111,7 @@ def broken_vector_store(tmp_path_factory):
     return VectorStore(str(tmp_path), "all-MiniLM-L6-v2", max_results=0)
 
 
+
 _MOCK_ANSWER = "This is a mock answer about the course."
 _MOCK_SOURCES = ["Python Basics - Lesson 1", "Python Basics - Lesson 2"]
 _MOCK_SESSION_ID = "session_1"
@@ -131,7 +132,11 @@ def mock_rag_system():
 
 @pytest.fixture
 def test_app(mock_rag_system):
-    """FastAPI app with real endpoint logic but a mocked RAGSystem."""
+    """FastAPI app with real endpoint logic but a mocked RAGSystem.
+
+    Mirrors the routes in app.py without static file mounting so tests
+    run without a frontend build or ChromaDB instance.
+    """
     app = FastAPI()
 
     class QueryRequest(BaseModel):
