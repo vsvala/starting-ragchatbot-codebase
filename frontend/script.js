@@ -7,6 +7,15 @@ let currentSessionId = null;
 // DOM elements
 let chatMessages, chatInput, sendButton, totalCourses, courseTitles, scrollToBottomBtn;
 
+// Theme management
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     // Get DOM elements after page loads
@@ -25,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     scrollToBottomBtn.addEventListener('click', () => {
         chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
     });
+
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
     setupEventListeners();
     createNewSession();
