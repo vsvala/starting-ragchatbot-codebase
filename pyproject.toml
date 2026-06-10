@@ -18,5 +18,15 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "black>=26.5.1",
     "pytest>=9.0.3",
+    "httpx>=0.27",
 ]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.pytest.ini_options]
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]
