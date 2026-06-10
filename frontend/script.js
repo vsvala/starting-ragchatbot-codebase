@@ -5,7 +5,7 @@ const API_URL = '/api';
 let currentSessionId = null;
 
 // DOM elements
-let chatMessages, chatInput, sendButton, totalCourses, courseTitles;
+let chatMessages, chatInput, sendButton, totalCourses, courseTitles, scrollToBottomBtn;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -15,7 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton = document.getElementById('sendButton');
     totalCourses = document.getElementById('totalCourses');
     courseTitles = document.getElementById('courseTitles');
-    
+    scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+
+    chatMessages.addEventListener('scroll', () => {
+        const distanceFromBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight;
+        scrollToBottomBtn.classList.toggle('visible', distanceFromBottom > 200);
+    });
+
+    scrollToBottomBtn.addEventListener('click', () => {
+        chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+    });
+
     setupEventListeners();
     createNewSession();
     loadCourseStats();
@@ -111,17 +121,24 @@ function createLoadingMessage() {
     return messageDiv;
 }
 
+const CLIPBOARD_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+const CHECK_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
 function addMessage(content, type, sources = null, isWelcome = false) {
     const messageId = Date.now();
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${type}${isWelcome ? ' welcome-message' : ''}`;
     messageDiv.id = `message-${messageId}`;
-    
+
     // Convert markdown to HTML for assistant messages
     const displayContent = type === 'assistant' ? marked.parse(content) : escapeHtml(content);
-    
+
     let html = `<div class="message-content">${displayContent}</div>`;
-    
+
+    if (type === 'assistant' && !isWelcome) {
+        html += `<div class="message-actions"><button class="copy-btn" title="Copy response">${CLIPBOARD_ICON}</button></div>`;
+    }
+
     if (sources && sources.length > 0) {
         const seen = new Set();
         const chips = sources
@@ -137,11 +154,37 @@ function addMessage(content, type, sources = null, isWelcome = false) {
             </details>
         `;
     }
-    
+
     messageDiv.innerHTML = html;
+
+    if (type === 'assistant' && !isWelcome) {
+        const copyBtn = messageDiv.querySelector('.copy-btn');
+        copyBtn.addEventListener('click', () => {
+            const writeText = () => {
+                copyBtn.innerHTML = CHECK_ICON;
+                copyBtn.classList.add('copied');
+                setTimeout(() => {
+                    copyBtn.innerHTML = CLIPBOARD_ICON;
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            };
+            navigator.clipboard.writeText(content).then(writeText).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = content;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                writeText();
+            });
+        });
+    }
+
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    
+
     return messageId;
 }
 
