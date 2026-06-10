@@ -54,3 +54,20 @@ The application will be available at:
 - Web Interface: `http://localhost:8000`
 - API Documentation: `http://localhost:8000/docs`
 
+## Running Tests
+
+Tests live in `backend/tests/` and cover the search tool, AI generator, and the RAG integration pipeline.
+
+```bash
+cd backend
+uv run pytest tests/ -v
+```
+
+### Test structure
+
+| File | What it covers |
+|------|---------------|
+| `tests/test_course_search_tool.py` | `CourseSearchTool.execute()` — result formatting, filter pass-through, error propagation, source tracking |
+| `tests/test_ai_generator.py` | `AIGenerator` — direct responses, tool-use loop, tool name/kwarg forwarding, conversation history |
+| `tests/test_rag_integration.py` | Real ChromaDB search pipeline, `MAX_RESULTS` config validation, `RAGSystem.query()` flow |
+
