@@ -1,0 +1,68 @@
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - button "+ New Chat" [ref=e6] [cursor=pointer]
+    - group [ref=e8]:
+      - generic "▶ Courses" [ref=e9] [cursor=pointer]
+    - group [ref=e11]:
+      - generic "▶ Try asking:" [ref=e12] [cursor=pointer]
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - paragraph [ref=e18]: Welcome to the Course Materials Assistant! I can help you with questions about courses, lessons and specific content. What would you like to know?
+        - generic [ref=e26]: What courses are available?
+        - generic [ref=e32]:
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: "Here are the available courses:"
+            - separator [ref=e35]
+            - heading "1. 🖥️ Building Towards Computer Use with Anthropic" [level=3] [ref=e36]:
+              - text: 1. 🖥️
+              - link "Building Towards Computer Use with Anthropic" [ref=e37] [cursor=pointer]:
+                - /url: https://www.deeplearning.ai/short-courses/building-toward-computer-use-with-anthropic/
+            - paragraph [ref=e38]: A course focused on leveraging Anthropic's API for computer use, covering multimodal requests, tool use, prompt caching, and real-world prompting.
+            - paragraph [ref=e39]:
+              - strong [ref=e40]: "Lessons:"
+            - list [ref=e41]:
+              - listitem [ref=e42]: "Lesson 0: Introduction"
+              - listitem [ref=e43]: "Lesson 1: Overview"
+              - listitem [ref=e44]: "Lesson 2: Working With The API"
+              - listitem [ref=e45]: "Lesson 3: Multimodal Requests"
+              - listitem [ref=e46]: "Lesson 4: Real World Prompting"
+              - listitem [ref=e47]: "Lesson 5: Prompt Caching"
+              - listitem [ref=e48]: "Lesson 6: Tool Use"
+              - listitem [ref=e49]: "Lesson 7: Computer Use"
+              - listitem [ref=e50]: "Lesson 8: Conclusion"
+            - separator [ref=e51]
+            - 'heading "2. 🤖 MCP: Build Rich-Context AI Apps with Anthropic" [level=3] [ref=e52]':
+              - text: 2. 🤖
+              - 'link "MCP: Build Rich-Context AI Apps with Anthropic" [ref=e53] [cursor=pointer]':
+                - /url: https://www.deeplearning.ai/short-courses/mcp-build-rich-context-ai-apps-with-anthropic/
+            - paragraph [ref=e54]: A course on the Model Context Protocol (MCP), teaching you how to build rich-context AI applications, create MCP servers and clients, and deploy remote servers.
+            - paragraph [ref=e55]:
+              - strong [ref=e56]: "Lessons:"
+            - list [ref=e57]:
+              - listitem [ref=e58]: "Lesson 0: Introduction"
+              - listitem [ref=e59]: "Lesson 1: Why MCP"
+              - listitem [ref=e60]: "Lesson 2: MCP Architecture"
+              - listitem [ref=e61]: "Lesson 3: Chatbot Example"
+              - listitem [ref=e62]: "Lesson 4: Creating An MCP Server"
+              - listitem [ref=e63]: "Lesson 5: Creating An MCP Client"
+              - listitem [ref=e64]: "Lesson 6: Connecting The MCP Chatbot To Reference Servers"
+              - listitem [ref=e65]: "Lesson 7: Adding Prompt And Resource Features"
+              - listitem [ref=e66]: "Lesson 8: Configuring Servers For Claude Desktop"
+              - listitem [ref=e67]: "Lesson 9: Creating And Deploying Remote Servers"
+              - listitem [ref=e68]: "Lesson 10: Conclusion"
+            - separator [ref=e69]
+            - paragraph [ref=e70]:
+              - text: Both are short courses offered through
+              - link "DeepLearning.AI" [ref=e71] [cursor=pointer]:
+                - /url: https://www.deeplearning.ai/
+              - text: in partnership with Anthropic. Let me know if you'd like more details about either course!
+          - button "Copy response" [ref=e73] [cursor=pointer]:
+            - img [ref=e74]
+      - button "Scroll to bottom" [active]:
+        - img
+        - text: Scroll to bottom
+      - generic [ref=e19]:
+        - textbox "Ask about courses, lessons, or specific content..." [ref=e20]
+        - button [ref=e21] [cursor=pointer]:
+          - img [ref=e22]

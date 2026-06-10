@@ -148,3 +148,82 @@ def test_tools_absent_when_not_provided(generator, mock_client):
 
     call_kwargs = mock_client.messages.create.call_args[1]
     assert "tools" not in call_kwargs
+
+
+# ── Sequential tool-call round tests ─────────────────────────────────────────
+
+def test_two_tool_rounds_makes_three_api_calls(generator, mock_client):
+    mock_client.messages.create.side_effect = [
+        make_tool_use_response(tool_id="t1"),
+        make_tool_use_response(tool_id="t2"),
+        make_text_response("Final answer after two tools"),
+    ]
+    tool_manager = MagicMock()
+    tool_manager.execute_tool.return_value = "some result"
+
+    result = generator.generate_response("query", tools=[{}], tool_manager=tool_manager)
+
+    assert mock_client.messages.create.call_count == 3
+    assert tool_manager.execute_tool.call_count == 2
+    assert result == "Final answer after two tools"
+
+
+def test_round2_api_call_includes_tools(generator, mock_client):
+    mock_client.messages.create.side_effect = [
+        make_tool_use_response(tool_id="t1"),
+        make_tool_use_response(tool_id="t2"),
+        make_text_response("Done"),
+    ]
+    tool_manager = MagicMock()
+    tool_manager.execute_tool.return_value = "result"
+
+    generator.generate_response("query", tools=[{"name": "search_course_content"}], tool_manager=tool_manager)
+
+    second_call_kwargs = mock_client.messages.create.call_args_list[1][1]
+    assert "tools" in second_call_kwargs, "Tools must be present in round-2 call (regression for the stripped-tools bug)"
+
+
+def test_final_api_call_excludes_tools_after_max_rounds(generator, mock_client):
+    mock_client.messages.create.side_effect = [
+        make_tool_use_response(tool_id="t1"),
+        make_tool_use_response(tool_id="t2"),
+        make_text_response("Done"),
+    ]
+    tool_manager = MagicMock()
+    tool_manager.execute_tool.return_value = "result"
+
+    generator.generate_response("query", tools=[{"name": "search_course_content"}], tool_manager=tool_manager)
+
+    third_call_kwargs = mock_client.messages.create.call_args_list[2][1]
+    assert "tools" not in third_call_kwargs, "Tools must be stripped in the forced-final call after max rounds"
+
+
+def test_early_termination_when_round1_returns_text(generator, mock_client):
+    mock_client.messages.create.side_effect = [
+        make_tool_use_response(tool_id="t1"),
+        make_text_response("Short answer"),
+    ]
+    tool_manager = MagicMock()
+    tool_manager.execute_tool.return_value = "result"
+
+    result = generator.generate_response("query", tools=[{}], tool_manager=tool_manager)
+
+    assert mock_client.messages.create.call_count == 2
+    assert tool_manager.execute_tool.call_count == 1
+    assert result == "Short answer"
+
+
+def test_messages_accumulated_across_two_rounds(generator, mock_client):
+    mock_client.messages.create.side_effect = [
+        make_tool_use_response(tool_id="t1"),
+        make_tool_use_response(tool_id="t2"),
+        make_text_response("Done"),
+    ]
+    tool_manager = MagicMock()
+    tool_manager.execute_tool.return_value = "result"
+
+    generator.generate_response("query", tools=[{}], tool_manager=tool_manager)
+
+    third_call_messages = mock_client.messages.create.call_args_list[2][1]["messages"]
+    # user + assistant(round1) + user(tool_result_1) + assistant(round2) + user(tool_result_2)
+    assert len(third_call_messages) == 5
